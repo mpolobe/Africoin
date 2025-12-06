@@ -3,6 +3,11 @@
 
 set -e
 
+if [ ! -d "africoin-core" ]; then
+    echo "Error: africoin-core directory not found. Run build.sh first."
+    exit 1
+fi
+
 cd africoin-core
 
 echo "Quick rebuild of Africoin Core..."

@@ -1,9 +1,9 @@
 #!/bin/bash
-# Add railway staking optimizations
+# Add staking optimizations
 
 set -e
 
-echo "Adding railway staking optimizations..."
+echo "Adding staking optimizations..."
 
 # Placeholder for staking optimization implementation
 

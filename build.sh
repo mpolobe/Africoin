@@ -7,6 +7,7 @@ set -e  # Exit on error
 BLACKCOIN_REPO="https://github.com/CoinBlack/blackcoin.git"
 PROJECT_DIR="africoin-core"
 BUILD_JOBS=4
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Colors for output
 RED='\033[0;31m'
@@ -44,25 +45,25 @@ clone_blackcoin() {
 # Step 2: Apply Africoin branding modifications
 apply_branding() {
     print_step "Applying Africoin branding modifications..."
-    ./scripts/apply_branding.sh
+    "${SCRIPT_DIR}/scripts/apply_branding.sh"
 }
 
 # Step 3: Apply chain parameter modifications
 apply_chain_params() {
     print_step "Applying chain parameter modifications (1B supply, 2.5min blocks)..."
-    ./scripts/apply_chain_params.sh
+    "${SCRIPT_DIR}/scripts/apply_chain_params.sh"
 }
 
 # Step 4: Apply PeerCoin security features
 apply_security() {
     print_step "Implementing PeerCoin security features..."
-    ./scripts/apply_security.sh
+    "${SCRIPT_DIR}/scripts/apply_security.sh"
 }
 
-# Step 5: Apply railway staking optimizations
+# Step 5: Apply staking optimizations
 apply_staking() {
-    print_step "Adding railway staking optimizations..."
-    ./scripts/apply_staking.sh
+    print_step "Adding staking optimizations..."
+    "${SCRIPT_DIR}/scripts/apply_staking.sh"
 }
 
 # Step 6: Build the core daemon
