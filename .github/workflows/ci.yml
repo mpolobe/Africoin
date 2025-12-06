@@ -1,0 +1,51 @@
+name: CI Validation
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  validate:
+    name: Validate Changes
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check shell scripts
+        run: |
+          echo "Validating shell scripts..."
+          if ls *.sh 1> /dev/null 2>&1; then
+            for script in *.sh scripts/*.sh; do
+              if [ -f "$script" ]; then
+                echo "Checking $script"
+                bash -n "$script" || exit 1
+              fi
+            done
+            echo "✅ All shell scripts are valid"
+          else
+            echo "No shell scripts found"
+          fi
+
+      - name: Check markdown files
+        run: |
+          echo "Validating markdown files..."
+          if command -v markdown-link-check &> /dev/null; then
+            find . -name "*.md" -exec markdown-link-check {} \;
+          else
+            echo "markdown-link-check not installed, skipping"
+          fi
+
+      - name: Validate documentation structure
+        run: |
+          echo "Checking documentation structure..."
+          if [ -f "README.md" ]; then
+            echo "✅ README.md exists"
+          fi
+          if [ -d "docs" ]; then
+            echo "✅ docs directory exists"
+            ls -la docs/
+          fi
