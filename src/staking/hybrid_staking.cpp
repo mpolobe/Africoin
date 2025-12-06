@@ -33,6 +33,7 @@
 #include "security/kernel.h"
 #include "security/checkpoints.h"
 #include "security/stakemodifier.h"
+#include "security/security_config.h"
 
 // TODO: Include actual Africoin headers when integrated
 // #include "chain.h"
@@ -262,8 +263,8 @@ int64_t HybridStaking::CalculateBlockReward(int nHeight, BlockType blockType) {
     // return nSubsidy;
     
     // Stub implementation - return base reward
-    // 50 AFRC = 50 * 100000000 satoshis
-    int64_t nSubsidy = 5000000000; // 50 AFRC
+    // 50 AFRC using COIN constant from security_config.h
+    int64_t nSubsidy = 50 * COIN;
     
     // Apply halvings
     int halvings = nHeight / 210000;
