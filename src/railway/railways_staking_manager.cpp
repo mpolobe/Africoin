@@ -13,8 +13,8 @@ void AfricaRailwaysStakingManager::InitializeRailwayNodes() {
         {"nairobi", "NBO", 500000 * COIN},
         {"cairo", "CAI", 500000 * COIN},
         {"lagos", "LOS", 500000 * COIN},
-        {"capetown", "CPT", 300000 * COIN},
-        {"addisababa", "ADD", 300000 * COIN}
+        {"cape_town", "CPT", 300000 * COIN},
+        {"addis_ababa", "ADD", 300000 * COIN}
     };
 
     for (const auto& station : stations) {
@@ -77,7 +77,7 @@ double AfricaRailwaysStakingManager::CalculateSecurityScore() {
     
     for (const auto& pair : railwayNodes) {
         const RailwayStakingNode& node = pair.second;
-        if (node.isActive && node.lastStakeTime > std::time(nullptr) - 24 * 60 * 60) {
+        if (node.isActive && node.lastStakeTime > std::time(nullptr) - SECONDS_PER_DAY) {
             activeNodes++;
             totalStakingPower += node.allocation;
         }
@@ -86,7 +86,7 @@ double AfricaRailwaysStakingManager::CalculateSecurityScore() {
     double participationScore = (double)activeNodes / railwayNodes.size();
     double stakingScore = (totalStakingPower > 0) ? 1.0 : 0.0;
     
-    return (participationScore * 0.7) + (stakingScore * 0.3);
+    return (participationScore * PARTICIPATION_WEIGHT) + (stakingScore * STAKING_POWER_WEIGHT);
 }
 
 std::vector<std::string> AfricaRailwaysStakingManager::GenerateSecurityRecommendations() {
@@ -95,7 +95,7 @@ std::vector<std::string> AfricaRailwaysStakingManager::GenerateSecurityRecommend
     int activeNodes = 0;
     for (const auto& pair : railwayNodes) {
         if (pair.second.isActive && 
-            pair.second.lastStakeTime > std::time(nullptr) - 24 * 60 * 60) {
+            pair.second.lastStakeTime > std::time(nullptr) - SECONDS_PER_DAY) {
             activeNodes++;
         }
     }
@@ -130,7 +130,7 @@ StakingHealthReport AfricaRailwaysStakingManager::GetNetworkHealth() {
 
     for (const auto& pair : railwayNodes) {
         const RailwayStakingNode& node = pair.second;
-        if (node.isActive && node.lastStakeTime > GetTime() - 24 * 60 * 60) {
+        if (node.isActive && node.lastStakeTime > GetTime() - SECONDS_PER_DAY) {
             activeRailwayNodes++;
         }
     }
