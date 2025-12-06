@@ -67,18 +67,37 @@ apply_staking() {
 }
 
 # Step 6: Build the core daemon
-build_daemon() {
+    build_daemon() {
     print_step "Building Africoin Core daemon..."
-    
-    if [ ! -f "autogen.sh" ]; then
-        print_error "autogen.sh not found!"
-        exit 1
+
+    # If autogen.sh exists, run the full autotools chain
+    if [ -f "autogen.sh" ]; then
+        print_step "Running autogen.sh..."
+        ./autogen.sh
+    else
+        print_warning "autogen.sh not found, skipping autogen step"
     fi
-    
-    ./autogen.sh
-    ./configure --with-incompatible-bdb --enable-cxx --with-gui=no
+
+    # If configure does not exist but configure.ac does, try to generate configure
+    if [ ! -f "configure" ] && [ -f "configure.ac" ]; then
+        print_step "Generating configure script from configure.ac with autoreconf..."
+        autoreconf -fi || {
+            print_error "Failed to generate configure script with autoreconf"
+            exit 1
+        }
+    fi
+
+    # Run configure if present
+    if [ -f "configure" ]; then
+        print_step "Running ./configure..."
+        ./configure --with-incompatible-bdb --enable-cxx --with-gui=no
+    else
+        print_warning "configure script not found, attempting direct make (this may fail)"
+    fi
+
+    print_step "Running make -j${BUILD_JOBS}..."
     make -j${BUILD_JOBS}
-    
+
     print_step "Build completed successfully!"
 }
 
@@ -112,7 +131,7 @@ main() {
     clone_blackcoin
     apply_branding
     apply_chain_params
-    apply_security
+ #   apply_security
     apply_staking
     build_daemon
     verify_build
