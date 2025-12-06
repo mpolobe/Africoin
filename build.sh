@@ -67,32 +67,32 @@ apply_staking() {
 }
 
 # Step 6: Build the core daemon
-    build_daemon() {
+build_daemon() {
     print_step "Building Africoin Core daemon..."
 
-    # If autogen.sh exists, run the full autotools chain
+    # If autogen.sh exists, use it
     if [ -f "autogen.sh" ]; then
         print_step "Running autogen.sh..."
         ./autogen.sh
     else
-        print_warning "autogen.sh not found, skipping autogen step"
+        print_warning "autogen.sh not found, trying autoreconf/bootstrap instead"
+        # Try to bootstrap using autoreconf if configure.ac exists
+        if [ -f "configure.ac" ] || [ -f "configure.in" ]; then
+            print_step "Running autoreconf -fi to generate configure..."
+            autoreconf -fi || {
+                print_error "autoreconf failed; cannot generate configure"
+                exit 1
+            }
+        fi
     fi
 
-    # If configure does not exist but configure.ac does, try to generate configure
-    if [ ! -f "configure" ] && [ -f "configure.ac" ]; then
-        print_step "Generating configure script from configure.ac with autoreconf..."
-        autoreconf -fi || {
-            print_error "Failed to generate configure script with autoreconf"
-            exit 1
-        }
-    fi
-
-    # Run configure if present
+    # Run configure if available or generated
     if [ -f "configure" ]; then
         print_step "Running ./configure..."
         ./configure --with-incompatible-bdb --enable-cxx --with-gui=no
     else
-        print_warning "configure script not found, attempting direct make (this may fail)"
+        print_error "No configure script found after bootstrap; cannot build"
+        exit 1
     fi
 
     print_step "Running make -j${BUILD_JOBS}..."
