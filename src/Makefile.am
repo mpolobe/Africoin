@@ -9,6 +9,7 @@ libafricoin_common_a_SOURCES = \
   src/security/kernel.cpp \
   src/security/checkpoints.cpp \
   src/security/stakemodifier.cpp \
+  src/staking/hybrid_staking.cpp \
   src/railway/railways_staking_manager.cpp
 
 # Non-installed headers
@@ -17,6 +18,7 @@ noinst_HEADERS = \
   src/security/checkpoints.h \
   src/security/stakemodifier.h \
   src/security/security_config.h \
+  src/staking/hybrid_staking.h \
   src/railway/railway_staking.h \
   src/railway/railways_staking_manager.h
 
