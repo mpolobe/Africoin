@@ -76,7 +76,7 @@ build_daemon() {
         ./autogen.sh
     else
         print_warning "autogen.sh not found, trying autoreconf/bootstrap instead"
-        # Try to bootstrap using autoreconf if configure.ac exists
+        # Try to bootstrap using autoreconf if configure.ac or configure.in exists
         if [ -f "configure.ac" ] || [ -f "configure.in" ]; then
             print_step "Running autoreconf -fi to generate configure..."
             autoreconf -fi || {
@@ -84,7 +84,7 @@ build_daemon() {
                 exit 1
             }
         fi
-    fi
+    end
 
     # Run configure if available or generated
     if [ -f "configure" ]; then
