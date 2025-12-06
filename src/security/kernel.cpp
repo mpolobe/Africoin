@@ -13,6 +13,12 @@
  * 
  * PeerCoin Reference: https://github.com/peercoin/peercoin
  * 
+ * IMPORTANT: This is a STUB/PLACEHOLDER file. It will NOT compile standalone.
+ * Full integration requires:
+ * 1. Including actual Africoin headers (uint256, CTransaction, etc.)
+ * 2. Implementing the TODO-marked functions with PeerCoin code
+ * 3. Adding to the build system with proper dependencies
+ * 
  * TODO: Replace stub implementations with actual PeerCoin code from:
  *       https://github.com/peercoin/peercoin/blob/master/src/kernel.cpp
  * 
@@ -223,6 +229,10 @@ int64_t Kernel::GetWeight(int64_t nIntervalBeginning, int64_t nIntervalEnd) {
     // return nTimeWeight;
     
     // Stub implementation showing the logic
+    // Validate interval order - end must be >= beginning
+    if (nIntervalEnd < nIntervalBeginning)
+        return 0;
+    
     int64_t nTimeWeight = nIntervalEnd - nIntervalBeginning - nStakeMinAge;
     
     if (nTimeWeight > nStakeMaxAge - nStakeMinAge)

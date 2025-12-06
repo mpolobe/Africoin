@@ -176,6 +176,17 @@ The PeerCoin security implementation addresses:
 | `nStakeTargetSpacing` | 2.5 min | Target block time |
 | `nModifierInterval` | 6 hours | Stake modifier update interval |
 
+#### Parameter Rationale
+
+These parameters are based on PeerCoin's proven values with adjustments for Africoin:
+
+- **nStakeMinAge (30 days)**: Matches PeerCoin's default to prevent rapid stake cycling. This ensures coins must be held for a meaningful period before participating in consensus. Can be reduced for testnet.
+- **nStakeMaxAge (90 days)**: Beyond 90 days, coins receive no additional weight benefit. This encourages regular network participation rather than holding indefinitely.
+- **nStakeTargetSpacing (2.5 minutes)**: Africoin uses faster blocks than PeerCoin (10 min) for better transaction throughput while maintaining security.
+- **nModifierInterval (6 hours)**: Standard PeerCoin interval provides good balance between security and computational overhead.
+
+These values can be adjusted in the header files or made configurable via chain parameters for different networks (mainnet, testnet, regtest).
+
 ### Checkpoints (To Be Added)
 
 ```cpp
