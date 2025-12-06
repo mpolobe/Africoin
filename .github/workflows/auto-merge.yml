@@ -19,7 +19,9 @@ jobs:
   auto-review:
     name: Auto Review PR
     runs-on: ubuntu-latest
-    if: github.event.pull_request.draft == false
+    if: |
+      github.event_name == 'workflow_dispatch' || 
+      (github.event.pull_request.draft == false && !contains(github.event.pull_request.labels.*.name, 'no-auto-merge'))
     
     steps:
       - name: Checkout code
@@ -50,11 +52,20 @@ jobs:
       - name: Check for security issues
         run: |
           echo "Checking for common security issues..."
-          # Check for hardcoded credentials
-          if git diff origin/main...HEAD | grep -iE "(password|api_key|secret|token)\s*=\s*['\"][^'\"]+['\"]"; then
-            echo "⚠️ Warning: Potential hardcoded credentials detected"
+          # Check for hardcoded credentials using multiple patterns
+          CREDENTIAL_PATTERNS="(password|api_key|secret|token|apikey|api-key|access_token|private_key|client_secret)"
+          
+          # Check for various assignment patterns
+          if git diff origin/main...HEAD | grep -iE "${CREDENTIAL_PATTERNS}\s*[=:]\s*['\"][^'\"]+['\"]"; then
+            echo "⚠️ Warning: Potential hardcoded credentials detected (quoted string)"
           fi
-          echo "✅ Security check completed"
+          
+          # Check for environment variable style assignments
+          if git diff origin/main...HEAD | grep -iE "^[+].*export\s+${CREDENTIAL_PATTERNS}\s*="; then
+            echo "⚠️ Warning: Potential hardcoded credentials in environment variable"
+          fi
+          
+          echo "✅ Security check completed (Note: For comprehensive scanning, consider using tools like truffleHog)"
 
       - name: Approve PR from trusted source
         if: steps.check_author.outputs.trusted == 'true'
@@ -70,24 +81,14 @@ jobs:
               body: '✅ Auto-approved by GitHub Actions - PR from trusted source (Copilot)'
             });
 
-      - name: Mark as ready for review if draft
-        if: github.event.pull_request.draft == true && steps.check_author.outputs.trusted == 'true'
-        uses: actions/github-script@v7
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            await github.rest.pulls.update({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: context.issue.number,
-              draft: false
-            });
 
   auto-merge:
     name: Auto Merge PR
     needs: auto-review
     runs-on: ubuntu-latest
-    if: github.event.pull_request.draft == false
+    if: |
+      github.event_name == 'workflow_dispatch' || 
+      (github.event.pull_request.draft == false && !contains(github.event.pull_request.labels.*.name, 'no-auto-merge'))
     
     steps:
       - name: Enable auto-merge

@@ -18,13 +18,19 @@ jobs:
       - name: Check shell scripts
         run: |
           echo "Validating shell scripts..."
-          if ls *.sh 1> /dev/null 2>&1; then
-            for script in *.sh scripts/*.sh; do
-              if [ -f "$script" ]; then
-                echo "Checking $script"
-                bash -n "$script" || exit 1
-              fi
-            done
+          # Find all .sh files and validate syntax
+          shopt -s nullglob
+          found_scripts=false
+          
+          for script in *.sh scripts/*.sh; do
+            if [ -f "$script" ]; then
+              found_scripts=true
+              echo "Checking $script"
+              bash -n "$script" || exit 1
+            fi
+          done
+          
+          if [ "$found_scripts" = true ]; then
             echo "✅ All shell scripts are valid"
           else
             echo "No shell scripts found"
