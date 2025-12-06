@@ -16,7 +16,6 @@ jobs:
       - name: Set up SSH key
         run: |
           mkdir -p ~/.ssh
-          # Use printf to preserve key formatting exactly
           printf "%s\n" "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
@@ -26,19 +25,38 @@ jobs:
           EC2_HOST: ${{ secrets.EC2_HOST }}
           EC2_USER: ${{ secrets.EC2_USER }}
         run: |
-          # Use explicit identity and force identities-only so the runner uses the provided key
           ssh -i ~/.ssh/id_rsa -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -o BatchMode=yes -o ConnectTimeout=10 "$EC2_USER@$EC2_HOST" << 'EOF'
-            cd /home/ubuntu   # your home directory
-            # example commands:
-            # git clone or pull your repo
+            set -e
+
+            cd /home/ubuntu  # CHANGE if your user/home is different
+
+            # Install dependencies (first time this runs it may take a while)
+            sudo apt-get update
+            sudo apt-get install -y \
+              git build-essential automake autoconf libtool pkg-config \
+              libdb-dev libdb++-dev \
+              libboost-all-dev \
+              libssl-dev
+
+            # Clone or update Africoin repo
             if [ ! -d Africoin ]; then
               git clone https://github.com/mpolobe/Africoin.git
             fi
+
             cd Africoin
             git pull origin main
 
-            # run app-specific commands here, e.g.:
-            # npm install
-            # npm run build
-            # pm2 restart app
+            # Build Africoin Core
+            chmod +x build.sh
+            ./build.sh
+
+            # Stop any running daemon
+            pkill -f africoind || true
+            sleep 3
+
+            # Start new daemon
+            mkdir -p $HOME/.africoin
+            ./africoin-core/src/africoind -daemon -conf=$HOME/.africoin/africoin.conf
+
+            echo "Deployment and daemon restart complete."
           EOF
