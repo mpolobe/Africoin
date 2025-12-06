@@ -29,7 +29,7 @@ The main build script automates the entire build process:
 2. Apply Africoin branding modifications
 3. Apply chain parameter modifications (1B supply, 2.5min blocks)
 4. Implement PeerCoin security features
-5. Add railway staking optimizations
+5. Add staking optimizations
 6. Build the core daemon
 7. Verify the build
 
