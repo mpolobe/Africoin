@@ -1,0 +1,1 @@
+// staking.cpp: Proof-of-stake and staking operations for Africoin.

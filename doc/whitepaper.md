@@ -1,0 +1,1 @@
+<!-- whitepaper.md: Project whitepaper will explain Africoin architecture and purpose. -->

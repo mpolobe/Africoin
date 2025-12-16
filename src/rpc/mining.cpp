@@ -1,0 +1,1 @@
+// mining.cpp: RPC routines for mining control and status.

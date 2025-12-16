@@ -1,0 +1,1 @@
+// wallet.cpp: Africoin wallet core implementation.
