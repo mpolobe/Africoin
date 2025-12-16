@@ -1,0 +1,1 @@
+// protocol.h: Network protocol declarations and message structures.

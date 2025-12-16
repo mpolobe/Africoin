@@ -1,0 +1,1 @@
+// africoin_tests.cpp: Unit tests for Africoin core components.

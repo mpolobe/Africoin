@@ -1,0 +1,1 @@
+// railway.h: Consensus rules definitions and interfaces (Railway protocol).

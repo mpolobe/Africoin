@@ -1,0 +1,1 @@
+// validation.cpp: Blockchain and transaction validation logic.
