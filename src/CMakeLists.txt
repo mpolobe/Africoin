@@ -1,6 +1,21 @@
 # src/CMakeLists.txt
 
 # 1. Define the core consensus static library
+# in src/CMakeLists.txt
+
+# --- 1. SET INCLUDES & DEFINITIONS ---
+# Add the current directory and its subdirectories to the include path
+target_include_directories(${PROJECT_NAME} PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/consensus
+    ${CMAKE_CURRENT_SOURCE_DIR}/railway
+    ${CMAKE_CURRENT_SOURCE_DIR}/staking
+    ${CMAKE_CURRENT_SOURCE_DIR}/wallet
+    ${CMAKE_CURRENT_SOURCE_DIR}/net
+)
+
+# --- 2. THE CONSENSUS LIBRARY (Static Library) ---
+# Separates core consensus logic for easy linking and testing
 add_library(africoin_consensus STATIC
     consensus/validation.cpp
     consensus/pos_kernel.cpp
